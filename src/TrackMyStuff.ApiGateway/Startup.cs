@@ -1,5 +1,4 @@
 using System;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrackMyStuff.Common.Commands;
-using TrackMyStuff.ServiceBus;
+using TrackMyStuff.RabbitMq;
 
 namespace TrackMyStuff.ApiGateway
 {
@@ -24,9 +23,8 @@ namespace TrackMyStuff.ApiGateway
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddMediatR(GetType().Assembly);
-            services.AddAzureServiceBus(Configuration);
-            services.AddScoped<ICommandHandler<HeartBeatCommand>, HeartBeatCommandHandler>();
+            services.AddRabbitMq(Configuration);
+            services.AddSingleton<ICommandHandler<HeartBeatCommand>, HeartBeatCommandHandler>();
             var connectionString = Configuration["ConnectionStrings:ApiDbConnection"];
             services.AddDbContext<ApiContext>(options =>
                 options.UseMySql(connectionString, builder =>
@@ -48,11 +46,8 @@ namespace TrackMyStuff.ApiGateway
             {
                 endpoints.MapControllers();
             });
-            app.UseServiceBus(serviceBus =>
-            {
-                serviceBus.Connect();
-                serviceBus.Subscribe<HeartBeat, HeartBeatCommandHandler>();
-            });
+            app.UseRabbitMq(builder => builder
+                .SubscribeToCommand<HeartBeatCommand>());
         }
     }
 }

@@ -23,6 +23,8 @@ param (
 
 write-host "TrackMyStuff API Service utility (c) 2019 by cosmo";
 
+# docker run -d -p 5672:5672 -p 8081:15672 -e RABBITMQ_DEFAULT_USER=white -e RABBITMQ_DEFAULT_PASS=Password123! --name trackmystuff_rabbit_1 rabbitmq:management
+
 if ($down) {
 	write-host "Running DOWN script";
     $rmApi = $true;

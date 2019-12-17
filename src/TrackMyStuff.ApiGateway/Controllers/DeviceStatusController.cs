@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MediatR;
 using System.Threading.Tasks;
-using TrackMyStuff.ApiGateway.Queries;
-using TrackMyStuff.Common.Commands;
+using TrackMyStuff.ApiGateway.DataAccess;
 
 namespace TrackMyStuff.ApiGateway.Controllers
 {
@@ -11,13 +9,12 @@ namespace TrackMyStuff.ApiGateway.Controllers
     [Route("[controller]")]
     public class DeviceStatusController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ApiContext _ctx;
         private readonly ILogger<DeviceStatusController> _logger;
 
-        public DeviceStatusController(IMediator mediator, ILogger<DeviceStatusController> logger,
-            ICommandHandler<HeartBeatCommand> handler)
+        public DeviceStatusController(ApiContext ctx, ILogger<DeviceStatusController> logger)
         {
-            _mediator = mediator;
+            _ctx = ctx;
             _logger = logger;
         }
 
@@ -25,7 +22,7 @@ namespace TrackMyStuff.ApiGateway.Controllers
         [Route("{id}")]
         public async Task<ActionResult<DeviceStatus>> Get(string id)
         {
-            var result = await _mediator.Send(new GetDeviceStatusQuery { DeviceId = id });
+            var result = await _ctx.DeviceStatus.FindAsync(id);
             if (result != null)
             {
                 return Ok(result);

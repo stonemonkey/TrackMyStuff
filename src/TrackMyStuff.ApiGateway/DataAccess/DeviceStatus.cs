@@ -1,6 +1,6 @@
 using System;
 
-namespace TrackMyStuff.ApiGateway.Queries
+namespace TrackMyStuff.ApiGateway.DataAccess
 {
     public class DeviceStatus
     {

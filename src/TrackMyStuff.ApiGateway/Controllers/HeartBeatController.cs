@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TrackMyStuff.Common.Commands;
-using Microsoft.Azure.ServiceBus;
-using System.Text;
-using Newtonsoft.Json;
+using TrackMyStuff.Common.ServiceBus;
 
 namespace TrackMyStuff.ApiGateway.Controllers
 {
@@ -12,20 +10,19 @@ namespace TrackMyStuff.ApiGateway.Controllers
     [Route("[controller]")]
     public class HeartBeatController : ControllerBase
     {
-        private readonly IQueueClient _queueClient;
+        private readonly IServiceBus _serviceBus;
         private readonly ILogger<DeviceStatusController> _logger;
 
-        public HeartBeatController(IQueueClient queueClient, ILogger<DeviceStatusController> logger)
+        public HeartBeatController(IServiceBus serviceBus, ILogger<DeviceStatusController> logger)
         {
-            _queueClient = queueClient;
+            _serviceBus = serviceBus;
             _logger = logger;
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] HeartBeatCommand command)
         {
-            var json = JsonConvert.SerializeObject(command);
-            await _queueClient.SendAsync(new Message(Encoding.UTF8.GetBytes(json)));
+            await _serviceBus.PublishCommandAsync(command);
             return Accepted();
         }
     }

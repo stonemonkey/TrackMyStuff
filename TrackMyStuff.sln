@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackMyStuff.ApiGateway", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackMyStuff.Common", "src\TrackMyStuff.Common\TrackMyStuff.Common.csproj", "{44BBC2AA-C18D-4B36-99F1-3346115ECF27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackMyStuff.ServiceBus", "src\TrackMyStuff.ServiceBus\TrackMyStuff.ServiceBus.csproj", "{06F45945-0596-4008-B47A-E6B181D6B8A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackMyStuff.RabbitMq", "src\TrackMyStuff.RabbitMq\TrackMyStuff.RabbitMq.csproj", "{06F45945-0596-4008-B47A-E6B181D6B8A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

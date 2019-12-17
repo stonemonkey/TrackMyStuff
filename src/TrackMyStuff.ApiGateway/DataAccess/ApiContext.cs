@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TrackMyStuff.ApiGateway.Queries;
+using TrackMyStuff.ApiGateway.DataAccess;
 
 public class ApiContext : DbContext
 {

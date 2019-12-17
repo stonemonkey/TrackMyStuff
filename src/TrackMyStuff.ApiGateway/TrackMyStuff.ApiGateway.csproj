@@ -5,9 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="7.0.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TrackMyStuff.Common\TrackMyStuff.Common.csproj" />
-    <ProjectReference Include="..\TrackMyStuff.ServiceBus\TrackMyStuff.ServiceBus.csproj" />
+    <ProjectReference Include="..\TrackMyStuff.RabbitMq\TrackMyStuff.RabbitMq.csproj" />
   </ItemGroup>
 
 
