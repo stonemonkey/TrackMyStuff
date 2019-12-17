@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using TrackMyStuff.Common.Commands;
 using TrackMyStuff.RabbitMq;
 
@@ -42,6 +43,7 @@ namespace TrackMyStuff.ApiGateway
             }
             app.UseRouting();
             app.UseAuthorization();
+            app.UseSerilogRequestLogging();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
