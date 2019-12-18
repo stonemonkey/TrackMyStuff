@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -22,7 +24,7 @@ namespace TrackMyStuff.ApiGateway
                 var host = CreateHostBuilder(args).Build();
             
                 Log.Information("Applying migrations ({ApplicationContext})...", AppName);
-                // todo
+                host.MigrateDbContext<ApiContext>();
                 
                 Log.Information("Starting web host ({ApplicationContext})...", AppName);
                 host.Run();
@@ -72,6 +74,20 @@ namespace TrackMyStuff.ApiGateway
                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
                 .AddEnvironmentVariables();
             return builder.Build();
+        }
+    }
+
+    public static class HostExtensions
+    {
+        public static IHost MigrateDbContext<TContext>(this IHost host) where TContext : DbContext
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<TContext>();
+                context.Database.Migrate();
+            }
+
+            return host;
         }
     }
 }

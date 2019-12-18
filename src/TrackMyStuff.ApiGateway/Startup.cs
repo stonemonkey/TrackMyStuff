@@ -25,13 +25,8 @@ namespace TrackMyStuff.ApiGateway
         {
             services.AddControllers();
             services.AddRabbitMq(Configuration);
-            services.AddSingleton<ICommandHandler<HeartBeatCommand>, HeartBeatCommandHandler>();
-            var connectionString = Configuration["ConnectionStrings:ApiDbConnection"];
-            services.AddDbContext<ApiContext>(options =>
-                options.UseMySql(connectionString, builder =>
-                {
-                    builder.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
-                }));
+            services.AddCustomDbContext<ApiContext>(Configuration);
+            services.AddSingleton<ICommandHandler<HeartBeatCommand>, HeartBeatCommandHandler>();  
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +45,22 @@ namespace TrackMyStuff.ApiGateway
             });
             app.UseRabbitMq(builder => builder
                 .SubscribeToCommand<HeartBeatCommand>());
+        }
+    }
+    
+    public static class CustomExtensions
+    {
+        public static IServiceCollection AddCustomDbContext<TContext>(
+            this IServiceCollection services, IConfiguration configuration)
+            where TContext : DbContext
+        {
+            var connectionString = configuration["ConnectionStrings:ApiDbConnection"];
+            services.AddDbContext<ApiContext>(options =>
+                options.UseMySql(connectionString, builder =>
+                {
+                    builder.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
+                }));
+            return services;
         }
     }
 }

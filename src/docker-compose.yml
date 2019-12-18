@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+
+  mysqldata:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=Password123!
+    ports:
+      - "5306:3306"
+    volumes:
+      - trackmystuff-mysqldata:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:management
+    environment:
+      - RABBITMQ_DEFAULT_USER=white
+      - RABBITMQ_DEFAULT_PASS=Password123!
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+
+  trackmystuff-mysqldata:
+    external: false
