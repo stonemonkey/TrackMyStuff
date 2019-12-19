@@ -2,6 +2,13 @@ version: '3.7'
 
 services:
 
+  seq:
+    image: datalust/seq:latest
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5340:80"
+
   mysqldata:
     image: mariadb:latest
     environment:
