@@ -5,7 +5,7 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": "ApiGateway",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -20,6 +20,29 @@
                 "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
                 "uriFormat": "%s/devicestatus/1234"
             },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "DevicesService",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/TrackMyStuff.DevicesService/bin/Debug/netcoreapp3.1/TrackMyStuff.DevicesService.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/TrackMyStuff.DevicesService",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            // "serverReadyAction": {
+            //     "action": "openExternally",
+            //     "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+            //     "uriFormat": "%s"
+            // },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },

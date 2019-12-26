@@ -6,10 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using TrackMyStuff.Common.Events;
+using TrackMyStuff.Common.Commands;
+using TrackMyStuff.DevicesService.DataAccess;
+using TrackMyStuff.DevicesService.Handlers;
 using TrackMyStuff.RabbitMq;
 
-namespace TrackMyStuff.ApiGateway
+namespace TrackMyStuff.DevicesService
 {
     public class Startup
     {
@@ -25,8 +27,8 @@ namespace TrackMyStuff.ApiGateway
         {
             services.AddControllers();
             services.AddRabbitMq(Configuration);
-            services.AddCustomDbContext<ApiContext>(Configuration);
-            services.AddScoped<IEventHandler<DeviceStatusUpdatedEvent>, DeviceStatusUpdatedEventHandler>();  
+            services.AddCustomDbContext<DevContext>(Configuration);
+            services.AddScoped<ICommandHandler<HeartBeatCommand>, HeartBeatCommandHandler>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,18 +46,17 @@ namespace TrackMyStuff.ApiGateway
                 endpoints.MapControllers();
             });
             app.UseRabbitMq(builder => builder
-                .SubscribeToEvent<DeviceStatusUpdatedEvent>());
+                .SubscribeToCommand<HeartBeatCommand>());
         }
     }
-    
     public static class CustomExtensions
     {
         public static IServiceCollection AddCustomDbContext<TContext>(
             this IServiceCollection services, IConfiguration configuration)
             where TContext : DbContext
         {
-            var connectionString = configuration["ConnectionStrings:ApiDbConnection"];
-            services.AddDbContext<ApiContext>(options =>
+            var connectionString = configuration["ConnectionStrings:DevDbConnection"];
+            services.AddDbContext<DevContext>(options =>
                 options.UseMySql(connectionString, builder =>
                 {
                     builder.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);

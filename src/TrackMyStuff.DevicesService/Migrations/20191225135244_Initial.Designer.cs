@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using TrackMyStuff.DevicesService.DataAccess;
 
-namespace TrackMyStuff.ApiGateway.Migrations
+namespace TrackMyStuff.DevicesService.Migrations
 {
-    [DbContext(typeof(ApiContext))]
-    [Migration("20191213102611_Initial")]
+    [DbContext(typeof(DevContext))]
+    [Migration("20191225135244_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,17 +19,17 @@ namespace TrackMyStuff.ApiGateway.Migrations
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("TrackMyStuff.ApiGateway.Queries.DeviceStatus", b =>
+            modelBuilder.Entity("TrackMyStuff.DevicesService.DataAccess.HeartBeat", b =>
                 {
                     b.Property<string>("DeviceId")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<DateTime>("LastSeenAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("DeviceId");
 
-                    b.ToTable("DeviceStatus");
+                    b.ToTable("HeartBeat");
                 });
 #pragma warning restore 612, 618
         }
