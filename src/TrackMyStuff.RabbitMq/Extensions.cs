@@ -14,11 +14,31 @@ namespace TrackMyStuff.RabbitMq
 {
     public static class Extensions
     {
+        public static string GetRabbitMqConnectionString(this IConfiguration configuration)
+        {
+            var section = configuration.GetSection("RabbitMq");
+            var username = section.GetValue("Username", "guest");
+            var password = section.GetValue("Password", "guest");
+            var host = section.GetValue("HostName:0", "localhost");
+            var port = section.GetValue("Port", "5672");
+            var vhost = section.GetValue("VirtualHost", "");
+            if (vhost == "/")
+            {
+                vhost = "";
+            }
+            return $"amqp://{username}:{password}@{host}:{port}/{vhost}";
+        }
+
         public static IServiceCollection AddRabbitMq(
             this IServiceCollection services, IConfiguration configuration)
         {
+            var section = configuration.GetSection("RabbitMq");
+            if (section.Value == null)
+            {
+                throw new InvalidOperationException("Missing 'RabbitMq' section in config!");
+            }
             var options = new RawRabbitConfiguration();
-            configuration.GetSection("RabbitMq").Bind(options);
+            section.Bind(options);
 
             IBusClient client = null;
             Policy
