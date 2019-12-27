@@ -1,4 +1,5 @@
 using System;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -72,7 +73,7 @@ namespace TrackMyStuff.DevicesService
             app.UseHealthChecks("/hc", new HealthCheckOptions
             {
                 Predicate = _ => true, // runs all registred checks
-                // ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
         }
     }

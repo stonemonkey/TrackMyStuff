@@ -33,7 +33,7 @@ namespace TrackMyStuff.RabbitMq
             this IServiceCollection services, IConfiguration configuration)
         {
             var section = configuration.GetSection("RabbitMq");
-            if (section.Value == null)
+            if (!section.Exists())
             {
                 throw new InvalidOperationException("Missing 'RabbitMq' section in config!");
             }

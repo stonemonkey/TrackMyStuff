@@ -1,9 +1,12 @@
 using System;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using TrackMyStuff.Common.Events;
@@ -23,10 +26,24 @@ namespace TrackMyStuff.ApiGateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration["ConnectionStrings:ApiDbConnection"];
+
             services.AddControllers();
             services.AddRabbitMq(Configuration);
-            services.AddCustomDbContext<ApiContext>(Configuration);
-            services.AddScoped<IEventHandler<DeviceStatusUpdatedEvent>, DeviceStatusUpdatedEventHandler>();  
+            services.AddCustomDbContext<ApiContext>(connectionString);
+            services.AddScoped<IEventHandler<DeviceStatusUpdatedEvent>, DeviceStatusUpdatedEventHandler>();
+
+            // health checks
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddMySql(
+                    connectionString,
+                    name: "ApiGateway-check",
+                    tags: new string[] { "db", "mysql" })
+                .AddRabbitMQ(
+                    Configuration.GetRabbitMqConnectionString(),
+                    name: "ApiGateway-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,16 +62,26 @@ namespace TrackMyStuff.ApiGateway
             });
             app.UseRabbitMq(builder => builder
                 .SubscribeToEvent<DeviceStatusUpdatedEvent>());
+
+            // health check endpoints
+            app.UseHealthChecks("/liveness", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+            app.UseHealthChecks("/hc", new HealthCheckOptions
+            {
+                Predicate = _ => true, // runs all registred checks
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
         }
     }
     
     public static class CustomExtensions
     {
         public static IServiceCollection AddCustomDbContext<TContext>(
-            this IServiceCollection services, IConfiguration configuration)
+            this IServiceCollection services, string connectionString)
             where TContext : DbContext
         {
-            var connectionString = configuration["ConnectionStrings:ApiDbConnection"];
             services.AddDbContext<ApiContext>(options =>
                 options.UseMySql(connectionString, builder =>
                 {
