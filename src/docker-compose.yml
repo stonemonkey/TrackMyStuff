@@ -2,30 +2,30 @@ version: '3.7'
 
 services:
 
-  seq:
-    image: datalust/seq:latest
-    environment:
-      - ACCEPT_EULA=Y
-    ports:
-      - "5340:80"
-
   mysqldata:
     image: mariadb:latest
     environment:
-      - MYSQL_ROOT_PASSWORD=Password123!
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
-      - "5306:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
       - trackmystuff-mysqldata:/var/lib/mysql
 
   rabbitmq:
     image: rabbitmq:management
     environment:
-      - RABBITMQ_DEFAULT_USER=white
-      - RABBITMQ_DEFAULT_PASS=Password123!
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MGMT_PORT}:15672"
+
+  seq:
+    image: datalust/seq:latest
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "${SEQ_PORT}:80"
 
 volumes:
 

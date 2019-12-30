@@ -28,7 +28,7 @@ namespace TrackMyStuff.DevicesService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration["ConnectionStrings:DevDbConnection"];
+            var connectionString = Configuration["ConnectionStrings:DevConnection"];
 
             services.AddControllers();
             services.AddRabbitMq(Configuration);
