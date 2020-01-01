@@ -1,9 +1,9 @@
 param (
 	[ValidateNotNullOrEmpty()]
-    [string]$server = "localhost",
+	[string]$server = "seq",			# service defined in docker-compose.yml
 
 	[ValidateNotNullOrEmpty()]
-	[string]$port = "5340",
+	[string]$port = "5340",				# port exposed for local consumers (debug) and frontend access
 
 	[switch]$rm = $false
 )
@@ -12,10 +12,9 @@ $seqServerUrl = "";
 $seqPort = "";
 
 if (-not($rm)) {
-	$seqServerUrl = "http://"+$server+":"+$port;
+	$seqServerUrl = "http://"+$server;	# uses port 80 for consumers running inside containers network
 	$seqPort = $port;
 }
 # docker-compose variables
 $env:SEQ_PORT = $seqPort;
-# application variables
-$env:Serilog__SeqServerUrl = $seqServerUrl;
+$env:SEQ_SERVER_URL = $seqServerUrl;

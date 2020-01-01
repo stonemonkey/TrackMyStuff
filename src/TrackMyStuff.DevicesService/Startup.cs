@@ -29,6 +29,10 @@ namespace TrackMyStuff.DevicesService
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration["ConnectionStrings:DevConnection"];
+            Log.Information("ConnectionStrings:DevConnection={DevConnection}", connectionString);
+
+            var rabbitMqConnectionString = Configuration.GetRabbitMqConnectionString();
+            Log.Information("RabbitMqConnectionString={RabbitMqConnection}", rabbitMqConnectionString);
 
             services.AddControllers();
             services.AddRabbitMq(Configuration);
@@ -43,7 +47,7 @@ namespace TrackMyStuff.DevicesService
                     name: "DevicesService-check",
                     tags: new string[] { "db", "mysql" })
                 .AddRabbitMQ(
-                    Configuration.GetRabbitMqConnectionString(),
+                    rabbitMqConnectionString,
                     name: "DevicesService-rabbitmqbus-check",
                     tags: new string[] { "rabbitmqbus" });
         }

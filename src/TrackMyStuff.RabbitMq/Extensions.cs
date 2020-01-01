@@ -19,7 +19,7 @@ namespace TrackMyStuff.RabbitMq
             var section = configuration.GetSection("RabbitMq");
             var username = section.GetValue("Username", "guest");
             var password = section.GetValue("Password", "guest");
-            var host = section.GetValue("HostName:0", "localhost");
+            var host = section.GetValue("HostName:0", "rabbitMq");
             var port = section.GetValue("Port", "5672");
             var vhost = section.GetValue("VirtualHost", "");
             if (vhost == "/")

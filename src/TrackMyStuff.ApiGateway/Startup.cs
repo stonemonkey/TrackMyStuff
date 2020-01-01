@@ -27,7 +27,11 @@ namespace TrackMyStuff.ApiGateway
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration["ConnectionStrings:ApiConnection"];
+            Log.Information("ConnectionStrings:ApiConnection={ApiConnection}", connectionString);
 
+            var rabbitMqConnectionString = Configuration.GetRabbitMqConnectionString();
+            Log.Information("RabbitMqConnectionString={RabbitMqConnection}", rabbitMqConnectionString);
+            
             services.AddControllers();
             services.AddRabbitMq(Configuration);
             services.AddCustomDbContext<ApiContext>(connectionString);
@@ -41,7 +45,7 @@ namespace TrackMyStuff.ApiGateway
                     name: "ApiGateway-check",
                     tags: new string[] { "db", "mysql" })
                 .AddRabbitMQ(
-                    Configuration.GetRabbitMqConnectionString(),
+                    rabbitMqConnectionString,
                     name: "ApiGateway-rabbitmqbus-check",
                     tags: new string[] { "rabbitmqbus" });
         }

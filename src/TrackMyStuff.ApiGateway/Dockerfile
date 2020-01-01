@@ -10,12 +10,12 @@ RUN dotnet restore ./TrackMyStuff.ApiGateway/
 
 # copy everything else and build the api
 COPY . .
-WORKDIR "/src/TrackMyStuff.ApiGateway"
+WORKDIR "./TrackMyStuff.ApiGateway"
 RUN dotnet publish -c Release -o out
 
 # build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 WORKDIR /app
-COPY --from=build /app/api/out ./
+COPY --from=build /src/TrackMyStuff.ApiGateway/out ./
 EXPOSE 80
 ENTRYPOINT ["dotnet", "TrackMyStuff.ApiGateway.dll"]
