@@ -14,10 +14,28 @@ Prerequisites:
 - [Install PowerShell Core 6](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-6)
 
 Steps:
-1. Open a console and change dir to ```/src```
-2. Run ```..\scripts\set-env.ps1```
-3. Run ```docker-compose up -d```
+1. Open PowerShell console and change dir to `/src` relative to the repository root
+2. Run `..\scripts\set-env.ps1`
+3. Run `docker-compose up -d`
 
-If everything went ok:
-- The API is accessible at http://localhost:5000/devicestatus/1234
-- The RabbitMq message queue is accessible at http://localhost:5000
+Once the containers are up and running,
+```
+Starting src_rabbitmq_1  ... done
+Starting src_mysqldata_1 ... done
+Starting src_seq_1       ... done
+Starting src_apigw_1     ... done
+Starting src_devsrv_1    ... done
+```
+You should be able to access any of the services at the following URLs, from your dev machine:
+- The ApiGateway (src_apigw_1) is accessible at http://localhost:5000 and the following endpoints are available:
+  * GET /devicestatus/_deviceId_ for reading the status of a device
+  * POST /heartbeat for adding devices heartbeat
+  * GET /hc for reading healthy check result of the service
+  * GET /liveness for reading the availability of the service
+- The DevicesService (src_devsrv_1) is not directly accessible
+- Infrastructure
+  * MariaDB Server (src_mysqldata_1): connect using favorite MySQL client application to `localhost:5306` with `Uid=root;Pwd=Password123!`
+  * RabbitMQ (src_rabbitmq_1): http://10.0.75.1:15672/ (login with username=guest, password=guest)
+  * Seq (src_seq_1): http://10.0.75.1:5340
+
+ 
