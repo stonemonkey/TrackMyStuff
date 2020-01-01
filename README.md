@@ -7,16 +7,16 @@ Experimental API for IoT device tracking based on microservices arhitecture, NET
 ## Getting started
 The simplest way to spin up and run everything is to use docker-compose CLI. When developing is also usefull to be able to debug a service while all the rest of the infrastructure is up and runing.
 
-### Launching with docker-compose
+### Launching in docker-compose
 Prerequisites:
 - Clone this repository
 - [Install docker-compose](https://docs.docker.com/compose/install/)
 - [Install PowerShell Core 6](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-6)
 
 Steps:
-1. Open PowerShell console and change dir to `/src` relative to the repository root
-2. Run `..\scripts\set-env.ps1`
-3. Run `docker-compose up -d`
+1. Open PowerShell console and change dir to `\src` relative to the repository root
+2. Run `..\scripts\set-env.ps1`. This will set all the environment variables used to configure the the containers and the services. See `\src\docker-compose.yml`.
+3. Run `docker-compose up -d`. On the first run this will download base images for NET Core 3.1, RabbitMQ, MariaDB and Seq containers.
 
 Once the containers are up and running,
 ```
@@ -38,4 +38,21 @@ You should be able to access any of the services at the following URLs, from you
   * RabbitMQ (src_rabbitmq_1): http://10.0.75.1:15672/ (login with username=guest, password=guest)
   * Seq (src_seq_1): http://10.0.75.1:5340
 
- 
+Run `docker-compose down` in `\src` dir to stop and remove the containers. This is going to preserve database. To remove docker volume used by the database run `docker-compose down --volume`. 
+
+### Debugging in Visual Studio Code
+Prerequisites:
+- [Install Visual Studio Code](https://code.visualstudio.com/download)
+
+Steps:
+1. Open PowerShell console and change dir to `\src` relative to the repository root
+2. Run `..\scripts\set-env.ps1`
+3. Run `docker-compose up -d src_mysqldata_1 src_rabbitmq_1 src_seq_1 src_devsrv_1`. Exclude the service you want to debug from the list. In this case `src_apigw_1` is going to be debugged.
+4. Change dir to `\TrackMyStuff.ApiGateway`
+5. Run `dotnet build`
+6. Open repository root dir in VSCode
+7. Put a breakpoint in `\src\TrackMyStuff.ApiGateway\Controllers\DeviceStatusController.cs`, `Get` method
+8. Debug and Run `ApiGateway`. See `\.vscode\launch.json` for the debugger configuration.
+9. Open `http://localhost:5000/devicestatus/1234` in browser. The breakpoint should be hit.
+
+The configuration values for the service under debug is taken now from the `appsettings.Development.json`.
