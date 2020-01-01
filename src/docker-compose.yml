@@ -20,6 +20,22 @@ services:
     ports:
       - "${APIGW_PORT:-5000}:80"
 
+  devsrv:
+    build:
+      context: .
+      dockerfile: TrackMyStuff.DevicesService/Dockerfile
+    depends_on:
+      - mysqldata
+      - rabbitmq
+      - seq
+    environment:
+      - ConnectionStrings__DevConnection=${DEV_CONNECTION_STRING}
+      - RabbitMq__Hostnames__0=${RABBITMQ_HOST}
+      - RabbitMq__Port=${RABBITMQ_PORT}
+      - RabbitMq__Username=${RABBITMQ_DEFAULT_USER}
+      - RabbitMq__Password=${RABBITMQ_DEFAULT_PASS}
+      - Serilog__SeqServerUrl=${SEQ_SERVER_URL}
+
   mysqldata:
     image: mariadb:latest
     environment:
