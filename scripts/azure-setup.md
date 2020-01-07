@@ -1,4 +1,29 @@
-# Setup Azure
+# Setup Azure - AKS (https://docs.microsoft.com/en-us/azure/aks/)
+az group create -n TrackMyStuff -l northeurope --subscription "Visual Studio Professional"
+
+az acr create -n TrackMyStuffRegistry -g TrackMyStuff --subscription "Visual Studio Professional" --sku Basic --admin-enabled true
+
+az acr login -n TrackMyStuffRegistry --subscription "Visual Studio Professional"
+
+az acr list -g TrackMyStuff --subscription "Visual Studio Professional" --query "[].{acrLoginServer:loginServer}" --output table
+
+docker tag src_devsrv trackmystuffregistry.azurecr.io/src_devsrv:v1
+docker tag src_apigw trackmystuffregistry.azurecr.io/src_apigw:v1
+
+docker push trackmystuffregistry.azurecr.io/src_devsrv:v1
+docker push trackmystuffregistry.azurecr.io/src_apigw:v1
+
+az acr repository show-tags -n TrackMyStuffRegistry --subscription "Visual Studio Professional" --repository src_devsrv --output table
+
+az aks create -n "TrackMyStuffAKSCluster" -g TrackMyStuff --subscription "Visual Studio Professional" --node-count 6 --generate-ssh-keys --attach-acr TrackMyStuffRegistry
+
+az aks get-credentials -n TrackMyStuffAKSCluster -g TrackMyStuff --subscription "Visual Studio Professional"
+
+kubectl get nodes
+
+
+
+# Setup Azure - App Service
  
 az group create -n TrackMyStuff -l northeurope --subscription "Visual Studio Professional"
 
